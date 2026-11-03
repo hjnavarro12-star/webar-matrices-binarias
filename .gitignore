@@ -1,0 +1,64 @@
+# ─────────────────────────────────────────────
+# WebAR: matrices binarias — .gitignore
+# ─────────────────────────────────────────────
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular / Ionic build output
+dist/
+www/
+.angular/
+
+# Capacitor
+android/app/build/
+ios/App/build/
+android/.gradle/
+android/local.properties
+
+# Environment files — NUNCA al repo
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+
+# Notas privadas y documentación institucional
+notes/
+docs/
+
+# Auditorías, logs, errores locales
+audits/
+logs/
+errors/
+*.log
+
+# Secretos y credenciales
+*.pem
+*.key
+*.p12
+*.keystore
+keystore.jks
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Cache
+.cache/
+.npm/

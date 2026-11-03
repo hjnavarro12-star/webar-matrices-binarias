@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebAR POC — Barcode Marker Test</title>
+    <!--
+      PRUEBA DE CONCEPTO — RA-PBI-02
+      Este archivo es una prueba HTML pura (sin Angular) para verificar que
+      AR.js + A-Frame detectan un marcador Barcode en Chrome del PC antes
+      de integrar en el componente Angular.
+
+      Instrucciones:
+      1. Abrir este archivo en Chrome (o desde un servidor local con HTTPS)
+      2. Imprimir el marcador Barcode value=1 de:
+         https://github.com/nicolocarpignoli/artoolkit-barcode-markers-collection
+      3. Apuntar la cámara al marcador impreso
+      4. Debe aparecer el texto "Salón 1" sobre el marcador
+
+      Si funciona aquí → se puede integrar en Angular (RA-PBI-03).
+      Si no funciona aquí → el problema es de AR.js, no de Angular.
+    -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.8/aframe/build/aframe-ar.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      #status {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="status">Apunta al marcador Barcode #1</div>
+
+    <a-scene
+      embedded
+      arjs="sourceType: webcam;
+            detectionMode: mono_and_matrix;
+            matrixCodeType: 3x3_HAMMING63;
+            debugUIEnabled: false;"
+    >
+      <!-- Marcador Barcode value=1 → Salón 1 -->
+      <a-marker type="barcode" value="1" id="marker-1">
+        <a-text
+          value="Salón 1"
+          position="0 0.5 0"
+          align="center"
+          color="#0a709c"
+          scale="1.5 1.5 1.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Marcador Barcode value=2 → Salón 2 -->
+      <a-marker type="barcode" value="2" id="marker-2">
+        <a-text
+          value="Salón 2"
+          position="0 0.5 0"
+          align="center"
+          color="#e8c843"
+          scale="1.5 1.5 1.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Marcador Barcode value=3 → Salón 3 -->
+      <a-marker type="barcode" value="3" id="marker-3">
+        <a-text
+          value="Salón 3"
+          position="0 0.5 0"
+          align="center"
+          color="#ffffff"
+          scale="1.5 1.5 1.5"
+        ></a-text>
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      // Feedback visual en el banner de estado
+      const status = document.getElementById('status');
+      ['marker-1', 'marker-2', 'marker-3'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('markerFound', () => {
+          status.textContent = `✅ Marcador ${i + 1} detectado — Salón ${i + 1}`;
+          status.style.background = 'rgba(10, 112, 156, 0.9)';
+        });
+        el.addEventListener('markerLost', () => {
+          status.textContent = 'Apunta al marcador Barcode';
+          status.style.background = 'rgba(0,0,0,0.7)';
+        });
+      });
+    </script>
+  </body>
+</html>
