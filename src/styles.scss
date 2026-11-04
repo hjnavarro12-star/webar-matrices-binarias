@@ -1,0 +1,24 @@
+// WebAR: Matrices Binarias — Estilos globales
+// Colores institucionales Universidad del Pacífico
+:root {
+  --color-primary: #0a709c;
+  --color-accent:  #e8c843;
+  --color-dark:    #1a1a1a;
+  --color-light:   #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  background: var(--color-dark);
+  color: var(--color-light);
+}
