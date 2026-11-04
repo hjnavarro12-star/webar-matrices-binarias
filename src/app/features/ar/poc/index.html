@@ -40,19 +40,22 @@
     </style>
   </head>
   <body>
-    <div id="status">Apunta al marcador Barcode #1</div>
+    <div id="status">Apunta al marcador del Salón 101 (value=1)</div>
 
     <a-scene
       embedded
       arjs="sourceType: webcam;
+            sourceWidth: 1280;
+            sourceHeight: 960;
             detectionMode: mono_and_matrix;
-            matrixCodeType: 3x3_HAMMING63;
-            debugUIEnabled: false;"
+            matrixCodeType: 4x4_BCH_13_9_3;
+            debugUIEnabled: false;
+            maxDetectionRate: 30;"
     >
-      <!-- Marcador Barcode value=1 → Salón 1 -->
+      <!-- Marcador value=1 → Salón 101 (Piso 1) -->
       <a-marker type="barcode" value="1" id="marker-1">
         <a-text
-          value="Salón 1"
+          value="Salón 101"
           position="0 0.5 0"
           align="center"
           color="#0a709c"
@@ -60,10 +63,10 @@
         ></a-text>
       </a-marker>
 
-      <!-- Marcador Barcode value=2 → Salón 2 -->
-      <a-marker type="barcode" value="2" id="marker-2">
+      <!-- Marcador value=6 → Salón 201 (Piso 2) -->
+      <a-marker type="barcode" value="6" id="marker-6">
         <a-text
-          value="Salón 2"
+          value="Salón 201"
           position="0 0.5 0"
           align="center"
           color="#e8c843"
@@ -71,10 +74,10 @@
         ></a-text>
       </a-marker>
 
-      <!-- Marcador Barcode value=3 → Salón 3 -->
-      <a-marker type="barcode" value="3" id="marker-3">
+      <!-- Marcador value=11 → Salón 301 (Piso 3) -->
+      <a-marker type="barcode" value="11" id="marker-11">
         <a-text
-          value="Salón 3"
+          value="Salón 301"
           position="0 0.5 0"
           align="center"
           color="#ffffff"
@@ -88,15 +91,16 @@
     <script>
       // Feedback visual en el banner de estado
       const status = document.getElementById('status');
-      ['marker-1', 'marker-2', 'marker-3'].forEach((id, i) => {
+      ['marker-1', 'marker-6', 'marker-11'].forEach((id, i) => {
+        const salonNames = ['Salón 101', 'Salón 201', 'Salón 301'];
         const el = document.getElementById(id);
         if (!el) return;
         el.addEventListener('markerFound', () => {
-          status.textContent = `✅ Marcador ${i + 1} detectado — Salón ${i + 1}`;
+          status.textContent = `✅ Marcador detectado — ${salonNames[i]}`;
           status.style.background = 'rgba(10, 112, 156, 0.9)';
         });
         el.addEventListener('markerLost', () => {
-          status.textContent = 'Apunta al marcador Barcode';
+          status.textContent = 'Apunta al marcador del Salón 101 (value=1)';
           status.style.background = 'rgba(0,0,0,0.7)';
         });
       });
