@@ -123,15 +123,6 @@ npm run start
 
 ---
 
-## Documentación relacionada
-
-- [docs/documento-profesor.md](docs/documento-profesor.md) — Documento formal de entrega
-- [docs/stack-tecnico.md](docs/stack-tecnico.md) — Justificación técnica completa
-- [docs/sprints/SCRUM-plan.md](docs/sprints/SCRUM-plan.md) — Plan SCRUM con todos los PBIs y DoDs
-- [Marcadores SVG (externos)](https://github.com/nicolocarpignoli/artoolkit-barcode-markers-collection) — Colección de marcadores para imprimir
-
----
-
 ## Licencia
 
 Proyecto académico de la Universidad del Pacífico — ver [LICENSE](LICENSE) para términos completos.  
