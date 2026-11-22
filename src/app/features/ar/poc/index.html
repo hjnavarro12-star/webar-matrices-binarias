@@ -1,110 +1,112 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WebAR POC — Barcode Marker Test</title>
-    <!--
-      PRUEBA DE CONCEPTO — RA-PBI-02
-      Este archivo es una prueba HTML pura (sin Angular) para verificar que
-      AR.js + A-Frame detectan un marcador Barcode en Chrome del PC antes
-      de integrar en el componente Angular.
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>WebAR POC — 15 Salones UnPa</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #info {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: sans-serif;
+      font-size: 16px;
+      z-index: 9999;
+      text-align: center;
+      max-width: 90vw;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">Apunta al marcador de un salón</div>
+  
+  <a-scene embedded arjs vr-mode-ui="enabled: false">
+    
+    <!-- Piso 1: Salones 101-105 -->
+    <a-marker type="pattern" url="markers/pattern-101.patt">
+      <a-text value="Salón 101" position="0 0.5 0" align="center" color="#0a709c" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-102.patt">
+      <a-text value="Salón 102" position="0 0.5 0" align="center" color="#0a709c" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-103.patt">
+      <a-text value="Salón 103" position="0 0.5 0" align="center" color="#0a709c" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-104.patt">
+      <a-text value="Salón 104" position="0 0.5 0" align="center" color="#0a709c" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-105.patt">
+      <a-text value="Salón 105" position="0 0.5 0" align="center" color="#0a709c" scale="2 2 2"></a-text>
+    </a-marker>
+    
+    <!-- Piso 2: Salones 201-205 -->
+    <a-marker type="pattern" url="markers/pattern-201.patt">
+      <a-text value="Salón 201" position="0 0.5 0" align="center" color="#e8c843" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-202.patt">
+      <a-text value="Salón 202" position="0 0.5 0" align="center" color="#e8c843" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-203.patt">
+      <a-text value="Salón 203" position="0 0.5 0" align="center" color="#e8c843" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-204.patt">
+      <a-text value="Salón 204" position="0 0.5 0" align="center" color="#e8c843" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-205.patt">
+      <a-text value="Salón 205" position="0 0.5 0" align="center" color="#e8c843" scale="2 2 2"></a-text>
+    </a-marker>
+    
+    <!-- Piso 3: Salones 301-305 -->
+    <a-marker type="pattern" url="markers/pattern-301.patt">
+      <a-text value="Salón 301" position="0 0.5 0" align="center" color="#ffffff" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-302.patt">
+      <a-text value="Salón 302" position="0 0.5 0" align="center" color="#ffffff" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-303.patt">
+      <a-text value="Salón 303" position="0 0.5 0" align="center" color="#ffffff" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-304.patt">
+      <a-text value="Salón 304" position="0 0.5 0" align="center" color="#ffffff" scale="2 2 2"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="markers/pattern-305.patt">
+      <a-text value="Salón 305" position="0 0.5 0" align="center" color="#ffffff" scale="2 2 2"></a-text>
+    </a-marker>
+    
+    <a-entity camera></a-entity>
+  </a-scene>
 
-      Instrucciones:
-      1. Abrir este archivo en Chrome (o desde un servidor local con HTTPS)
-      2. Descargar e imprimir el marcador Barcode value=1 de:
-         https://github.com/nicolocarpignoli/artoolkit-barcode-markers-collection
-         Carpeta exacta: 4x4_bch_13_9_3/1.png — imprimir a mínimo 15x15 cm
-      3. Apuntar la cámara al marcador impreso
-      4. Debe aparecer el texto "Salón 101" sobre el marcador
-
-      Si funciona aquí → se puede integrar en Angular (RA-PBI-03).
-      Si no funciona aquí → el problema es de AR.js, no de Angular.
-    -->
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.8/aframe/build/aframe-ar.js"></script>
-    <style>
-      body { margin: 0; overflow: hidden; }
-      #status {
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.7);
-        color: #fff;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-family: sans-serif;
-        font-size: 14px;
-        z-index: 999;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="status">Apunta al marcador del Salón 101 (value=1)</div>
-
-    <a-scene
-      embedded
-      arjs="sourceType: webcam;
-            sourceWidth: 1280;
-            sourceHeight: 960;
-            detectionMode: mono_and_matrix;
-            matrixCodeType: 4x4_BCH_13_9_3;
-            debugUIEnabled: false;
-            maxDetectionRate: 30;"
-    >
-      <!-- Marcador value=1 → Salón 101 (Piso 1) -->
-      <a-marker type="barcode" value="1" id="marker-1">
-        <a-text
-          value="Salón 101"
-          position="0 0.5 0"
-          align="center"
-          color="#0a709c"
-          scale="1.5 1.5 1.5"
-        ></a-text>
-      </a-marker>
-
-      <!-- Marcador value=6 → Salón 201 (Piso 2) -->
-      <a-marker type="barcode" value="6" id="marker-6">
-        <a-text
-          value="Salón 201"
-          position="0 0.5 0"
-          align="center"
-          color="#e8c843"
-          scale="1.5 1.5 1.5"
-        ></a-text>
-      </a-marker>
-
-      <!-- Marcador value=11 → Salón 301 (Piso 3) -->
-      <a-marker type="barcode" value="11" id="marker-11">
-        <a-text
-          value="Salón 301"
-          position="0 0.5 0"
-          align="center"
-          color="#ffffff"
-          scale="1.5 1.5 1.5"
-        ></a-text>
-      </a-marker>
-
-      <a-entity camera></a-entity>
-    </a-scene>
-
-    <script>
-      // Feedback visual en el banner de estado
-      const status = document.getElementById('status');
-      ['marker-1', 'marker-6', 'marker-11'].forEach((id, i) => {
-        const salonNames = ['Salón 101', 'Salón 201', 'Salón 301'];
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener('markerFound', () => {
-          status.textContent = `✅ Marcador detectado — ${salonNames[i]}`;
-          status.style.background = 'rgba(10, 112, 156, 0.9)';
-        });
-        el.addEventListener('markerLost', () => {
-          status.textContent = 'Apunta al marcador del Salón 101 (value=1)';
-          status.style.background = 'rgba(0,0,0,0.7)';
-        });
+  <script>
+    var info = document.getElementById('info');
+    var markers = document.querySelectorAll('a-marker');
+    
+    markers.forEach(function(marker, i) {
+      var salonNum = [101,102,103,104,105,201,202,203,204,205,301,302,303,304,305][i];
+      
+      marker.addEventListener('markerFound', function() {
+        info.textContent = '✅ Salón ' + salonNum + ' detectado';
+        if (salonNum < 200) {
+          info.style.background = 'rgba(10,112,156,0.9)'; // Azul piso 1
+        } else if (salonNum < 300) {
+          info.style.background = 'rgba(232,200,67,0.9)'; // Amarillo piso 2
+        } else {
+          info.style.background = 'rgba(80,80,80,0.9)'; // Gris piso 3
+        }
       });
-    </script>
-  </body>
+      
+      marker.addEventListener('markerLost', function() {
+        info.textContent = 'Apunta al marcador de un salón';
+        info.style.background = 'rgba(0,0,0,0.8)';
+      });
+    });
+  </script>
+</body>
 </html>
