@@ -11,6 +11,8 @@ import {
   inject,
 } from '@angular/core';
 
+import { CameraPermissionService } from '../../services/camera-permission.service';
+
 type ArWindow = Window & {
   AFRAME?: unknown;
   ARjs?: unknown;
@@ -140,17 +142,36 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
   private readonly ngZone = inject(NgZone);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly cameraPermission = inject(CameraPermissionService);
   private readonly listeners = new AbortController();
   private readonly markerTimers = new Map<string, number>();
   private readonly detectedSalons = new Set<string>();
   private currentSalon?: string;
   private scene?: ArScene;
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     const mount = this.mountRef?.nativeElement;
     if (!this.arAvailable || !mount) {
       return;
     }
+
+    const permission = await this.cameraPermission.request();
+    if (permission === 'denied') {
+      this.setStatus(
+        'Permiso de cámara denegado. Habilítalo en Configuración y vuelve a intentarlo.',
+        'error',
+      );
+      return;
+    }
+    if (permission === 'error') {
+      this.setStatus(
+        'No se pudo solicitar el permiso de cámara. Revisa la configuración de Android.',
+        'error',
+      );
+      return;
+    }
+
+    if (this.listeners.signal.aborted) return;
 
     this.ngZone.runOutsideAngular(() => {
       const signal = this.listeners.signal;

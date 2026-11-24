@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
+import { CameraPermissionService } from '../../services/camera-permission.service';
 import { ArViewComponent } from './ar-view.component';
 
 type ArWindow = Window & {
@@ -37,13 +38,17 @@ describe('ArViewComponent', () => {
   ];
 
   let fixture: ComponentFixture<ArViewComponent> | undefined;
+  let permissionRequest: jasmine.Spy;
 
   beforeEach(async () => {
     arWindow.AFRAME = {};
     arWindow.ARjs = {};
+    permissionRequest = jasmine.createSpy('permissionRequest')
+      .and.returnValue(Promise.resolve('granted'));
 
     await TestBed.configureTestingModule({
       imports: [ArViewComponent],
+      providers: [{ provide: CameraPermissionService, useValue: { request: permissionRequest } }],
     }).compileComponents();
   });
 
@@ -77,8 +82,34 @@ describe('ArViewComponent', () => {
     expect(view.nativeElement.querySelector('a-scene')).toBeNull();
   });
 
-  it('crea la escena embebida con los quince marcadores y etiquetas AR sin diacríticos', () => {
+  it('solicita permiso de cámara antes de crear la escena', async () => {
     const view = render();
+    await view.whenStable();
+    view.detectChanges();
+
+    expect(permissionRequest).toHaveBeenCalledTimes(1);
+    expect(view.nativeElement.querySelector('a-scene')).not.toBeNull();
+  });
+
+  it('no crea la escena cuando el permiso de cámara es denegado', async () => {
+    permissionRequest.and.returnValue(Promise.resolve('denied'));
+
+    const view = render();
+    await view.whenStable();
+    view.detectChanges();
+
+    const status = view.nativeElement.querySelector('#ar-status') as HTMLElement;
+    expect(view.nativeElement.querySelector('a-scene')).toBeNull();
+    expect(status.textContent?.trim()).toBe(
+      'Permiso de cámara denegado. Habilítalo en Configuración y vuelve a intentarlo.',
+    );
+    expect(status.dataset['state']).toBe('error');
+  });
+
+  it('crea la escena embebida con los quince marcadores y etiquetas AR sin diacríticos', async () => {
+    const view = render();
+    await view.whenStable();
+    view.detectChanges();
     const scene = view.nativeElement.querySelector('a-scene') as HTMLElement;
     const markers = Array.from(scene.querySelectorAll('a-marker'));
     const labels = Array.from(scene.querySelectorAll('a-text'));
@@ -116,8 +147,10 @@ describe('ArViewComponent', () => {
     expect(scene.querySelector('a-entity')?.getAttribute('camera')).toBe('');
   });
 
-  it('actualiza el estado cuando la cámara inicia o falla', () => {
+  it('actualiza el estado cuando la cámara inicia o falla', async () => {
     const view = render();
+    await view.whenStable();
+    view.detectChanges();
     const status = view.nativeElement.querySelector('#ar-status') as HTMLElement;
 
     window.dispatchEvent(new CustomEvent('camera-init'));
@@ -137,6 +170,8 @@ describe('ArViewComponent', () => {
 
   it('actualiza el banner al encontrar y perder un marcador', fakeAsync(() => {
     const view = render();
+    tick();
+    view.detectChanges();
     const marker = view.nativeElement.querySelector('a-marker') as HTMLElement;
     const status = view.nativeElement.querySelector('#ar-status') as HTMLElement;
 
@@ -162,8 +197,10 @@ describe('ArViewComponent', () => {
     expect(status.dataset['state']).toBe('ready');
   }));
 
-  it('pausa la escena, detiene la cámara y neutraliza los callbacks de AR.js al destruirse', () => {
+  it('pausa la escena, detiene la cámara y neutraliza los callbacks de AR.js al destruirse', async () => {
     const view = render();
+    await view.whenStable();
+    view.detectChanges();
     const scene = view.nativeElement.querySelector('a-scene') as TestScene;
     const pause = jasmine.createSpy('pause');
     const setAnimationLoop = jasmine.createSpy('setAnimationLoop');

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WebAR UnPa</string>
+    <string name="title_activity_main">WebAR UnPa</string>
+    <string name="package_name">co.edu.unipacifico.webar</string>
+    <string name="custom_url_scheme">co.edu.unipacifico.webar</string>
+</resources>

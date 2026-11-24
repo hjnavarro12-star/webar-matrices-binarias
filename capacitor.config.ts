@@ -18,9 +18,9 @@ const config: CapacitorConfig = {
     ],
   },
   android: {
-    allowMixedContent: true,   // Necesario para AR.js sobre HTTP en desarrollo
+    allowMixedContent: true,   // Solo APK de prueba; desactivar en producción (RA-PBI-17)
     captureInput: true,
-    webContentsDebuggingEnabled: true, // Quitar en producción (RA-PBI-17)
+    webContentsDebuggingEnabled: true, // Necesario para inspección de PBI-04; quitar en RA-PBI-17
   },
   plugins: {
     Camera: {
