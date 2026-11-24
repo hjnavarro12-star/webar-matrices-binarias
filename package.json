@@ -7,7 +7,7 @@
     "start": "ng serve",
     "build": "ng build --configuration=production",
     "build:dev": "ng build",
-    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test": "ng test --watch=false --browsers=ChromeHeadlessNoSandbox",
     "lint": "ng lint",
     "cap:sync": "npx cap sync android",
     "cap:build": "npm run build && npx cap sync android",
