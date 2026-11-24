@@ -21,10 +21,10 @@ ar/
 
 | Artefacto | PBI | Estado |
 |-----------|-----|--------|
-| `poc/index.html` | RA-PBI-02 | ⏳ Pendiente — abrir en Chrome y verificar detección |
-| `ArViewComponent` | RA-PBI-03 | ⏳ Pendiente — Sprint RA-1 |
-| `ArService` | RA-PBI-09 | ⏳ Pendiente — Sprint RA-2 |
-| `ScheduleOverlayComponent` | RA-PBI-10 | ⏳ Pendiente — Sprint RA-2 |
+| `poc/index.html` | RA-PBI-02 | Pendiente de verificación documentada |
+| `ArViewComponent` | RA-PBI-03 | En revisión técnica; validación física y aceptación del PO pendientes |
+| `ArService` | RA-PBI-09 | Pendiente — Sprint RA-2 |
+| `ScheduleOverlayComponent` | RA-PBI-10 | Pendiente — Sprint RA-2 |
 
 ## Cómo empezar (RA-PBI-02)
 
@@ -35,18 +35,30 @@ ar/
 
 ## Integración Angular (RA-PBI-03)
 
-A-Frame no es compatible directamente con las plantillas Angular porque Angular sanitiza el HTML.
-La estrategia recomendada:
+**Estado:** implementación técnica disponible para revisión; el PBI no está cerrado.
 
-```typescript
-// En ArViewComponent
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+La estrategia implementada evita HTML dinámico interpolado y reduce la interferencia de Angular:
 
-arHtml: SafeHtml = this.sanitizer.bypassSecurityTrustHtml(`
-  <a-scene embedded arjs="...">
-    <!-- escena AR aquí -->
-  </a-scene>
-`);
+- A-Frame 1.3.0 y AR.js 3.4.5 se cargan de forma ordenada en `src/index.html`, con SRI SHA-384 y `crossorigin="anonymous"`.
+- La escena y los marcadores se crean imperativamente dentro de `NgZone.runOutsideAngular`.
+- El componente usa `OnPush`, `ViewEncapsulation.None` y cambio de detección explícito al actualizar el estado.
+- El host, el video, el lienzo y el `body` se dimensionan al viewport; el renderizador usa alfa para mostrar la cámara detrás de las etiquetas.
+- Los eventos `camera-init`, `camera-error`, `markerFound` y `markerLost` actualizan un banner accesible en español UTF-8 con tildes.
+- Las etiquetas AR usan `Salon` sin diacríticos por compatibilidad de la fuente; se centran sobre el marcador con rotación de −30° y escala 1.4 para evitar inclinar la cámara.
+- La detección procesa 640×480 a 20 FPS, solicita cámara 1280×960, usa confianza 0.75 y confirma eventos durante 120 ms para reducir falsos positivos.
+- El renderizador limita el canvas a 720×1280 y el banner usa 20 px para reducir CPU y mejorar accesibilidad.
+- Al destruir el componente se pausa la escena, se detiene el render loop, se libera la cámara y se neutralizan los callbacks de redimensión de AR.js.
+
+### Pruebas automatizadas
+
+```bash
+npm test
+npm run build:dev
+npm run build
 ```
 
-Si esta estrategia falla: usar `<iframe>` apuntando a `poc/index.html` servida localmente.
+En equipos sin Chrome instalado, defina `CHROME_BIN` con la ruta de un ejecutable Chromium o Chrome. La configuración `karma.conf.js` utiliza `ChromeHeadlessNoSandbox` para facilitar la ejecución en Windows.
+
+### Validación pendiente
+
+Los criterios AC-1 a AC-6 requieren HTTPS, cámara real, marcadores impresos y dispositivo Android físico. La evidencia, el tester, la versión de APK y la aceptación del Product Owner deben registrarse antes de cerrar RA-PBI-03. El reporte acumulado y la auditoría CVE local están en `docs/pbi-03-reporte-tecnico.md`.

@@ -56,11 +56,11 @@ WebAR/
 │       └── SCRUM-plan.md        # Plan completo: sprints, PBIs, DoDs
 │
 ├── notes/                       # Notas de trabajo privadas (no en git)
-│   ├── Clase.txt                # Transcripción de requisitos del profesor
-│   ├── seminario 2.txt          # Apuntes de clase
-│   ├── investigacion-ra-resultado.md  # Informe técnico de investigación
-│   ├── Llamada con DARWIN y 3 personas más.vtt  # Transcripción de reunión
-│   └── trello-estructura.md     # Estructura del tablero Trello
+│   ├── README.md                # Índice, categorías y estado de los documentos
+│   ├── 01-fuentes/              # Transcripciones y apuntes primarios
+│   ├── 02-investigacion/        # Investigación técnica histórica
+│   ├── 03-decisiones-y-contexto/ # Decisiones y handoff fundacional
+│   └── 04-planificacion/        # Backlog, Trello y checklists
 │
 ├── src/                         # Código fuente Angular + Ionic
 │   ├── app/
