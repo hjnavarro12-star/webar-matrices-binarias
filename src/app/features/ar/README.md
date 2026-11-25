@@ -61,4 +61,4 @@ En equipos sin Chrome instalado, defina `CHROME_BIN` con la ruta de un ejecutabl
 
 ### Validación pendiente
 
-Los criterios AC-1 a AC-6 requieren HTTPS, cámara real, marcadores impresos y dispositivo Android físico. La evidencia, el tester, la versión de APK y la aceptación del Product Owner deben registrarse antes de cerrar RA-PBI-03. El reporte acumulado y la auditoría CVE local están en `docs/pbi-03-reporte-tecnico.md`.
+Los criterios AC-1 a AC-6 requieren HTTPS, cámara real, marcadores impresos y dispositivo Android físico. La evidencia, el tester, la versión de APK y la aceptación del Product Owner deben registrarse antes de cerrar RA-PBI-03.

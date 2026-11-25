@@ -14,7 +14,6 @@ Versionado semántico: `vMAYOR.MENOR.PARCHE`
 - Suite Jasmine/Karma con cinco casos para estados de cámara, marcadores, UTF-8 y limpieza de recursos.
 - Configuración `ChromeHeadlessNoSandbox` para ejecutar pruebas en Windows.
 - Auditoría CVE local y hashes SRI SHA-384 para A-Frame y AR.js.
-- Reporte técnico acumulado de RA-PBI-03.
 - Paquete PBI-05 con APK `1.0-pbi05`, marcador 101, checksum y script de preparación.
 
 ### Corregido

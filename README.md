@@ -48,20 +48,6 @@ Funciona mediante **marcadores Barcode** (matrices binarias impresas) pegados en
 
 ```
 WebAR/
-├── docs/                        # Documentación técnica
-│   ├── README.md                # (este índice)
-│   ├── documento-profesor.md    # Documento formal para el profesor
-│   ├── stack-tecnico.md         # Justificación del stack
-│   └── sprints/
-│       └── SCRUM-plan.md        # Plan completo: sprints, PBIs, DoDs
-│
-├── notes/                       # Notas de trabajo privadas (no en git)
-│   ├── README.md                # Índice, categorías y estado de los documentos
-│   ├── 01-fuentes/              # Transcripciones y apuntes primarios
-│   ├── 02-investigacion/        # Investigación técnica histórica
-│   ├── 03-decisiones-y-contexto/ # Decisiones y handoff fundacional
-│   └── 04-planificacion/        # Backlog, Trello y checklists
-│
 ├── src/                         # Código fuente Angular + Ionic
 │   ├── app/
 │   │   └── features/
