@@ -1,7 +1,7 @@
 {
   "name": "webar-matrices-binarias",
   "version": "0.1.0",
-  "description": "Módulo de Realidad Aumentada con marcadores Barcode para identificación de salones — Universidad del Pacífico",
+  "description": "Módulo de Realidad Aumentada con marcadores Pattern para identificación de salones — Universidad del Pacífico",
   "private": true,
   "scripts": {
     "start": "ng serve",
@@ -12,6 +12,7 @@
     "cap:sync": "npx cap sync android",
     "cap:build": "npm run build && npx cap sync android",
     "cap:apk:debug": "npm run build && npx cap sync android && cd android && gradlew.bat assembleDebug",
+    "cap:pbi05:prepare": "node scripts/prepare-pbi05.cjs",
     "cap:open": "npx cap open android"
   },
   "dependencies": {

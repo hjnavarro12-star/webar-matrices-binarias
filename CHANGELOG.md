@@ -15,6 +15,7 @@ Versionado semántico: `vMAYOR.MENOR.PARCHE`
 - Configuración `ChromeHeadlessNoSandbox` para ejecutar pruebas en Windows.
 - Auditoría CVE local y hashes SRI SHA-384 para A-Frame y AR.js.
 - Reporte técnico acumulado de RA-PBI-03.
+- Paquete PBI-05 con APK `1.0-pbi05`, marcador 101, checksum y script de preparación.
 
 ### Corregido
 - Banner de Angular en español con tildes Unicode y metaetiqueta UTF-8 existente.

@@ -47,6 +47,7 @@ type ArScene = HTMLElement & {
     <div
       id="ar-status"
       [attr.data-state]="statusState"
+      [attr.data-salon]="currentSalon"
       role="status"
       aria-live="polite"
       aria-atomic="true"
@@ -146,7 +147,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
   private readonly listeners = new AbortController();
   private readonly markerTimers = new Map<string, number>();
   private readonly detectedSalons = new Set<string>();
-  private currentSalon?: string;
+  protected currentSalon?: string;
   private scene?: ArScene;
 
   async ngAfterViewInit(): Promise<void> {
@@ -195,6 +196,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
       for (const salon of this.salones) {
         const marker = document.createElement('a-marker');
         marker.setAttribute('type', 'pattern');
+        marker.setAttribute('data-salon', salon);
         marker.setAttribute('url', `assets/markers/pattern-${salon}.patt`);
         marker.setAttribute('minConfidence', '0.75');
         marker.setAttribute('smooth', 'true');

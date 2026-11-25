@@ -129,6 +129,7 @@ describe('ArViewComponent', () => {
       'alpha: true; maxCanvasWidth: 720; maxCanvasHeight: 1280',
     );
     expect(scene.getAttribute('vr-mode-ui')).toBe('enabled: false');
+    expect(markers.map(marker => marker.getAttribute('data-salon'))).toEqual(salones);
     expect(markers.map(marker => marker.getAttribute('url'))).toEqual(
       salones.map(salon => `assets/markers/pattern-${salon}.patt`),
     );
@@ -181,12 +182,14 @@ describe('ArViewComponent', () => {
 
     expect(status.textContent?.trim()).toBe('Salón 101 detectado');
     expect(status.dataset['state']).toBe('ready');
+    expect(status.dataset['salon']).toBe('101');
 
     marker.dispatchEvent(new CustomEvent('markerLost'));
     view.detectChanges();
 
     expect(status.textContent?.trim()).toBe('Apunta al marcador de un salón');
     expect(status.dataset['state']).toBe('ready');
+    expect(status.dataset['salon']).toBeUndefined();
 
     marker.dispatchEvent(new CustomEvent('markerFound'));
     marker.dispatchEvent(new CustomEvent('markerLost'));
