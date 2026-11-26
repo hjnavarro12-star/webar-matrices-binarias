@@ -37,6 +37,18 @@
       ]
     },
     {
+      "name": "Calentamiento de conexión y base de datos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/pattern-101/schedule",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms", "pattern-101", "schedule"]
+        }
+      }
+    },
+    {
       "name": "Horario del salón 101",
       "request": {
         "method": "GET",
