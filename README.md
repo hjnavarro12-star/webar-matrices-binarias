@@ -110,10 +110,12 @@ npm test
 npm run start
 ```
 
+API desplegada: https://webar-matrices-binarias-production.up.railway.app
+
 Endpoint de horarios:
 
 ```http
-GET /api/rooms/pattern-101/schedule
+GET https://webar-matrices-binarias-production.up.railway.app/api/rooms/pattern-101/schedule
 ```
 
 También acepta barcodes legacy del 1 al 64. Devuelve `room`, `pattern_marker_id` y `schedule`.

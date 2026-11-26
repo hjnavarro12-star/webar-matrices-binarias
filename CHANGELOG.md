@@ -17,6 +17,7 @@ Versionado semántico: `vMAYOR.MENOR.PARCHE`
 - Paquete PBI-05 con APK `1.0-pbi05`, marcador 101, checksum y script de preparación.
 - Migración PostgreSQL PBI-07 con `pattern_marker_id`, seed idempotente, `DATABASE_URL` y verificador.
 - Endpoint PBI-08 de horarios por Pattern o barcode legacy, con respuestas 200/400/404/500 y pruebas de contrato.
+- API desplegada en Railway y colección Postman para health, Pattern, 404 y 400.
 
 ### Corregido
 - Banner de Angular en español con tildes Unicode y metaetiqueta UTF-8 existente.
