@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "WebAR API — RA-PBI-08",
-    "description": "Colección de verificación para health, horario por Pattern, salón inexistente e identificador inválido.",
+    "name": "WebAR API — RA-PBI-08/12",
+    "description": "Colección de verificación para health, consulta de horarios y actualización protegida con JWT.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -117,6 +117,93 @@
             "exec": [
               "pm.test('Responde 400', () => pm.response.to.have.status(400));",
               "pm.test('Mensaje de validación', () => pm.expect(pm.response.json().error).to.include('Identificador inválido'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Actualizar horario del salón 101",
+      "description": "Reemplaza el horario del id numérico 1. Requiere un JWT con role admin en adminToken.",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schedule\": [\n    { \"day\": \"lunes\", \"start_time\": \"07:00\", \"end_time\": \"09:00\", \"subject\": \"Cálculo I\", \"teacher\": \"Prof. García\" },\n    { \"day\": \"miercoles\", \"start_time\": \"10:00\", \"end_time\": \"12:00\", \"subject\": \"Física II\", \"teacher\": \"Prof. Martínez\" },\n    { \"day\": \"viernes\", \"start_time\": \"14:00\", \"end_time\": \"16:00\", \"subject\": \"Programación I\", \"teacher\": \"Prof. Rodríguez\" }\n  ]\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/1/schedule",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms", "1", "schedule"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+              "pm.test('Actualización confirmada', () => pm.expect(pm.response.json().updated).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verificar horario tras actualizar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/pattern-101/schedule",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms", "pattern-101", "schedule"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+              "pm.test('Tres horarios persistidos', () => pm.expect(pm.response.json().schedule).to.have.lengthOf(3));",
+              "pm.test('Materia actualizada visible', () => pm.expect(pm.response.json().schedule[0].subject).to.eql('Cálculo I'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT sin token",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"schedule\": [] }",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/1/schedule",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms", "1", "schedule"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Rechaza sin autorización', () => pm.response.to.have.status(401));",
+              "pm.test('Solicita Bearer', () => pm.expect(pm.response.json().error).to.include('Authorization Bearer'));"
             ]
           }
         }

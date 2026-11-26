@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const { pool } = require('../db');
 
@@ -38,6 +39,105 @@ function mapRoomSchedule(rows) {
       }));
 
   return { room, schedule };
+}
+
+const VALID_DAYS = new Set(['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']);
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+function requireAdmin(req, res, next) {
+  const secret = process.env.JWT_SECRET?.trim();
+  if (!secret) {
+    return res.status(503).json({ error: 'La administración no está configurada.' });
+  }
+
+  const authorization = /^Bearer\s+(.+)$/i.exec(req.headers.authorization || '');
+  if (!authorization) {
+    return res.status(401).json({ error: 'Authorization Bearer requerido.' });
+  }
+
+  try {
+    const payload = jwt.verify(authorization[1], secret);
+    if (payload.role !== 'admin') {
+      return res.status(403).json({ error: 'Se requiere rol de administrador.' });
+    }
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'Token inválido o expirado.' });
+  }
+}
+
+function parseRoomId(value) {
+  if (!/^\d+$/.test(value)) return null;
+  const roomId = Number(value);
+  if (!Number.isInteger(roomId) || roomId < 1 || roomId > 2147483647) {
+    return null;
+  }
+  return roomId;
+}
+
+function validateSchedule(body) {
+  if (!body || !Array.isArray(body.schedule)) {
+    return { error: 'El cuerpo debe incluir un arreglo schedule.' };
+  }
+  if (body.schedule.length > 100) {
+    return { error: 'El horario no puede superar 100 registros.' };
+  }
+
+  const schedule = [];
+  for (const [index, entry] of body.schedule.entries()) {
+    if (!entry || typeof entry !== 'object') {
+      return { error: `El registro ${index + 1} no es válido.` };
+    }
+    if (!VALID_DAYS.has(entry.day)) {
+      return { error: `El día del registro ${index + 1} no es válido.` };
+    }
+    if (typeof entry.start_time !== 'string' || !TIME_PATTERN.test(entry.start_time)) {
+      return { error: `La hora inicial del registro ${index + 1} no es válida.` };
+    }
+    if (typeof entry.end_time !== 'string' || !TIME_PATTERN.test(entry.end_time)) {
+      return { error: `La hora final del registro ${index + 1} no es válida.` };
+    }
+    if (entry.start_time >= entry.end_time) {
+      return { error: `La hora final debe ser posterior a la inicial en el registro ${index + 1}.` };
+    }
+    if (typeof entry.subject !== 'string' || !entry.subject.trim() || entry.subject.trim().length > 200) {
+      return { error: `La materia del registro ${index + 1} no es válida.` };
+    }
+    if (typeof entry.teacher !== 'string' || !entry.teacher.trim() || entry.teacher.trim().length > 200) {
+      return { error: `El docente del registro ${index + 1} no es válido.` };
+    }
+
+    schedule.push({
+      day: entry.day,
+      start_time: entry.start_time,
+      end_time: entry.end_time,
+      subject: entry.subject.trim(),
+      teacher: entry.teacher.trim(),
+    });
+  }
+
+  return { schedule };
+}
+
+function buildScheduleInsert(roomId, schedule) {
+  const values = schedule.flatMap(entry => [
+    roomId,
+    entry.day,
+    entry.start_time,
+    entry.end_time,
+    entry.subject,
+    entry.teacher,
+  ]);
+  const placeholders = schedule.map((_, index) => {
+    const offset = index * 6;
+    return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, $${offset + 6})`;
+  }).join(', ');
+
+  return {
+    text: `INSERT INTO schedules (room_id, day, start_time, end_time, subject, teacher)
+           VALUES ${placeholders}`,
+    values,
+  };
 }
 
 router.get('/:marker_id/schedule', async (req, res) => {
@@ -88,8 +188,43 @@ router.get('/:marker_id/schedule', async (req, res) => {
   }
 });
 
-router.put('/:id/schedule', async (req, res) => {
-  res.status(501).json({ error: 'No implementado aún — pendiente RA-PBI-12' });
+router.put('/:id/schedule', requireAdmin, async (req, res) => {
+  const roomId = parseRoomId(req.params.id);
+  if (!roomId) {
+    return res.status(400).json({ error: 'El id del salón debe ser un entero positivo.' });
+  }
+
+  const validation = validateSchedule(req.body);
+  if (validation.error) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  let client;
+  try {
+    client = await pool.connect();
+    await client.query('BEGIN');
+    const room = await client.query('SELECT id FROM rooms WHERE id = $1 FOR UPDATE', [roomId]);
+    if (room.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Salón no encontrado' });
+    }
+
+    await client.query('DELETE FROM schedules WHERE room_id = $1', [roomId]);
+    if (validation.schedule.length > 0) {
+      const insert = buildScheduleInsert(roomId, validation.schedule);
+      await client.query(insert.text, insert.values);
+    }
+    await client.query('COMMIT');
+
+    res.set('Cache-Control', 'no-store');
+    return res.json({ updated: true });
+  } catch (error) {
+    if (client) await client.query('ROLLBACK').catch(() => {});
+    console.error('[rooms] Error al actualizar el horario:', error.message);
+    return res.status(500).json({ error: 'No se pudo actualizar el horario' });
+  } finally {
+    client?.release();
+  }
 });
 
 module.exports = router;

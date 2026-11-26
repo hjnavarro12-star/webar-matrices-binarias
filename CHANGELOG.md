@@ -19,6 +19,7 @@ Versionado semántico: `vMAYOR.MENOR.PARCHE`
 - Endpoint PBI-08 de horarios por Pattern o barcode legacy, con respuestas 200/400/404/500 y pruebas de contrato.
 - API desplegada en Railway y colección Postman para health, Pattern, 404 y 400.
 - Seed PBI-11 con 45 horarios de prueba para quince salones, idempotente y verificado dos veces en Neon.
+- Endpoint PBI-12 `PUT /api/rooms/:id/schedule` con JWT de administrador, validación, transacción y pruebas Postman; desplegado en Railway y APK `1.0-pbi12` compilada.
 
 ### Corregido
 - Banner de Angular en español con tildes Unicode y metaetiqueta UTF-8 existente.

@@ -123,6 +123,20 @@ También acepta barcodes legacy del 1 al 64. Devuelve `room`, `pattern_marker_id
 
 `npm run db:seed` carga 45 horarios de prueba deterministas, con tres horarios y tres materias distintas por cada uno de los quince salones. Es idempotente y no elimina horarios existentes.
 
+### Actualizar horarios (RA-PBI-12)
+
+```http
+PUT /api/rooms/1/schedule
+Authorization: Bearer <JWT con role admin>
+Content-Type: application/json
+
+{ "schedule": [{ "day": "lunes", "start_time": "07:00", "end_time": "09:00", "subject": "Cálculo I", "teacher": "Prof. García" }] }
+```
+
+Responde `200 { "updated": true }`. El reemplazo es transaccional, valida los campos y requiere `JWT_SECRET` configurado. La colección Postman incluye el `PUT`, la verificación posterior y el rechazo sin token; use `server/postman/webar-api-local.postman_environment.json` y complete `adminToken`.
+
+El `PUT` está desplegado en Railway y verificado públicamente. La APK debug actualizada está en `dist/pbi12/webar-pbi12-debug.apk` (`versionCode 6`, `versionName 1.0-pbi12`); consume los horarios de Railway/Neon en tiempo de ejecución.
+
 ---
 
 ## Licencia
