@@ -1,12 +1,15 @@
 {
   "name": "webar-server",
   "version": "0.1.0",
-  "description": "Backend Express + PostgreSQL para WebAR: matrices binarias",
+  "description": "Backend Express + PostgreSQL para WebAR: matrices binarias con marcadores Pattern",
   "private": true,
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "migrate": "node src/migrate.js",
+    "db:verify": "node src/verify-schema.js",
+    "test": "node --test"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

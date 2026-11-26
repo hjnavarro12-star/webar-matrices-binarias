@@ -103,7 +103,10 @@ npx cap sync android
 ```bash
 cd server
 npm install
-# Configurar .env con credenciales del VPS PostgreSQL
+# Configurar .env con PostgreSQL local o DATABASE_URL de Neon
+npm run migrate
+npm run db:verify
+npm test
 npm run start
 ```
 
