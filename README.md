@@ -110,6 +110,14 @@ npm test
 npm run start
 ```
 
+Endpoint de horarios:
+
+```http
+GET /api/rooms/pattern-101/schedule
+```
+
+También acepta barcodes legacy del 1 al 64. Devuelve `room`, `pattern_marker_id` y `schedule`.
+
 ---
 
 ## Licencia

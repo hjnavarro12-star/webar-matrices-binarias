@@ -13,9 +13,10 @@ export interface ScheduleEntry {
 
 export interface Room {
   id: number;
-  name: string;           // "Laboratorio 201"
-  barcode_value: number;  // valor del marcador Barcode (1–64)
-  block: string;          // "Bloque A"
+  name: string;              // "Salón 201"
+  pattern_marker_id: string; // "pattern-201"
+  barcode_value: number | null; // legacy
+  block: string;             // "Bloque A"
   capacity?: number;
 }
 

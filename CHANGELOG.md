@@ -16,6 +16,7 @@ Versionado semántico: `vMAYOR.MENOR.PARCHE`
 - Auditoría CVE local y hashes SRI SHA-384 para A-Frame y AR.js.
 - Paquete PBI-05 con APK `1.0-pbi05`, marcador 101, checksum y script de preparación.
 - Migración PostgreSQL PBI-07 con `pattern_marker_id`, seed idempotente, `DATABASE_URL` y verificador.
+- Endpoint PBI-08 de horarios por Pattern o barcode legacy, con respuestas 200/400/404/500 y pruebas de contrato.
 
 ### Corregido
 - Banner de Angular en español con tildes Unicode y metaetiqueta UTF-8 existente.
