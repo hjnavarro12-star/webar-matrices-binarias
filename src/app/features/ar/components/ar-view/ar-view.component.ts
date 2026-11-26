@@ -11,6 +11,7 @@ import {
   inject,
 } from '@angular/core';
 
+import { ArService } from '../../services/ar.service';
 import { CameraPermissionService } from '../../services/camera-permission.service';
 
 type ArWindow = Window & {
@@ -144,6 +145,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly cameraPermission = inject(CameraPermissionService);
+  private readonly arService = inject(ArService);
   private readonly listeners = new AbortController();
   private readonly markerTimers = new Map<string, number>();
   private readonly detectedSalons = new Set<string>();
@@ -268,6 +270,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
       this.markerTimers.delete(salon);
       this.detectedSalons.add(salon);
       this.currentSalon = salon;
+      this.arService.markerFound(salon);
       this.setStatus(`Salón ${salon} detectado`, 'ready');
     }, 120);
     this.markerTimers.set(salon, timer);
@@ -284,11 +287,13 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     const nextSalon = Array.from(this.detectedSalons).at(-1);
     if (nextSalon) {
       this.currentSalon = nextSalon;
+      this.arService.markerFound(nextSalon);
       this.setStatus(`Salón ${nextSalon} detectado`, 'ready');
       return;
     }
 
     this.currentSalon = undefined;
+    this.arService.markerLost();
     this.setStatus('Apunta al marcador de un salón', 'ready');
   };
 
@@ -312,6 +317,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     this.markerTimers.clear();
     this.detectedSalons.clear();
     this.currentSalon = undefined;
+    this.arService.markerLost();
   }
 
   private setStatus(

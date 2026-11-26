@@ -23,7 +23,7 @@ ar/
 |-----------|-----|--------|
 | `poc/index.html` | RA-PBI-02 | Pendiente de verificación documentada |
 | `ArViewComponent` | RA-PBI-03 | En revisión técnica; validación física y aceptación del PO pendientes |
-| `ArService` | RA-PBI-09 | Pendiente — Sprint RA-2 |
+| `ArService` | RA-PBI-09 | Implementación técnica verificada; aceptación del PO pendiente |
 | `ScheduleOverlayComponent` | RA-PBI-10 | Pendiente — Sprint RA-2 |
 
 ## Cómo empezar (RA-PBI-02)
@@ -48,6 +48,15 @@ La estrategia implementada evita HTML dinámico interpolado y reduce la interfer
 - La detección procesa 640×480 a 20 FPS, solicita cámara 1280×960, usa confianza 0.75 y confirma eventos durante 120 ms para reducir falsos positivos.
 - El renderizador limita el canvas a 720×1280 y el banner usa 20 px para reducir CPU y mejorar accesibilidad.
 - Al destruir el componente se pausa la escena, se detiene el render loop, se libera la cámara y se neutralizan los callbacks de redimensión de AR.js.
+
+### Servicio de horarios (RA-PBI-09)
+
+`ArService` consulta `GET /api/rooms/:marker_id/schedule` en Railway cuando `ArViewComponent` confirma un marcador. Expone `currentSchedule` y `detectedRoom` como `WritableSignal`, y `loading` y `error` como señales de solo lectura.
+
+- Los eventos se procesan fuera de `NgZone` y conservan el debounce de 120 ms del componente.
+- `switchMap` cancela la consulta anterior al cambiar de salón o perder el marcador.
+- Los resultados válidos se guardan en memoria por Pattern; si falla la red, se reutiliza el último horario del mismo salón.
+- Los errores 400, 404 y de red muestran mensajes amigables sin filtrar detalles de la API.
 
 ### Pruebas automatizadas
 

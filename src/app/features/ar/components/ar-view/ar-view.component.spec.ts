@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
+import { ArService } from '../../services/ar.service';
 import { CameraPermissionService } from '../../services/camera-permission.service';
 import { ArViewComponent } from './ar-view.component';
 
@@ -39,16 +40,23 @@ describe('ArViewComponent', () => {
 
   let fixture: ComponentFixture<ArViewComponent> | undefined;
   let permissionRequest: jasmine.Spy;
+  let markerFound: jasmine.Spy;
+  let markerLost: jasmine.Spy;
 
   beforeEach(async () => {
     arWindow.AFRAME = {};
     arWindow.ARjs = {};
     permissionRequest = jasmine.createSpy('permissionRequest')
       .and.returnValue(Promise.resolve('granted'));
+    markerFound = jasmine.createSpy('markerFound');
+    markerLost = jasmine.createSpy('markerLost');
 
     await TestBed.configureTestingModule({
       imports: [ArViewComponent],
-      providers: [{ provide: CameraPermissionService, useValue: { request: permissionRequest } }],
+      providers: [
+        { provide: CameraPermissionService, useValue: { request: permissionRequest } },
+        { provide: ArService, useValue: { markerFound, markerLost } },
+      ],
     }).compileComponents();
   });
 
@@ -183,6 +191,7 @@ describe('ArViewComponent', () => {
     expect(status.textContent?.trim()).toBe('Salón 101 detectado');
     expect(status.dataset['state']).toBe('ready');
     expect(status.dataset['salon']).toBe('101');
+    expect(markerFound).toHaveBeenCalledOnceWith('101');
 
     marker.dispatchEvent(new CustomEvent('markerLost'));
     view.detectChanges();
@@ -190,6 +199,7 @@ describe('ArViewComponent', () => {
     expect(status.textContent?.trim()).toBe('Apunta al marcador de un salón');
     expect(status.dataset['state']).toBe('ready');
     expect(status.dataset['salon']).toBeUndefined();
+    expect(markerLost).toHaveBeenCalledTimes(1);
 
     marker.dispatchEvent(new CustomEvent('markerFound'));
     marker.dispatchEvent(new CustomEvent('markerLost'));
@@ -198,6 +208,23 @@ describe('ArViewComponent', () => {
 
     expect(status.textContent?.trim()).toBe('Apunta al marcador de un salón');
     expect(status.dataset['state']).toBe('ready');
+    expect(markerFound).toHaveBeenCalledTimes(1);
+  }));
+
+  it('consulta el siguiente salón cuando el marcador actual desaparece', fakeAsync(() => {
+    const view = render();
+    tick();
+    view.detectChanges();
+    const markers = view.nativeElement.querySelectorAll('a-marker');
+
+    markers[0].dispatchEvent(new CustomEvent('markerFound'));
+    markers[1].dispatchEvent(new CustomEvent('markerFound'));
+    tick(120);
+    markers[0].dispatchEvent(new CustomEvent('markerLost'));
+    view.detectChanges();
+
+    expect(markerFound.calls.allArgs()).toEqual([['101'], ['102']]);
+    expect(markerLost).not.toHaveBeenCalled();
   }));
 
   it('pausa la escena, detiene la cámara y neutraliza los callbacks de AR.js al destruirse', async () => {
