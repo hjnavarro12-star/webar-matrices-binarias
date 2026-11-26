@@ -11,6 +11,7 @@ import {
   inject,
 } from '@angular/core';
 
+import { ScheduleOverlayComponent } from '../schedule-overlay/schedule-overlay.component';
 import { ArService } from '../../services/ar.service';
 import { CameraPermissionService } from '../../services/camera-permission.service';
 
@@ -41,6 +42,7 @@ type ArScene = HTMLElement & {
 @Component({
   selector: 'app-ar-view',
   standalone: true,
+  imports: [ScheduleOverlayComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   template: `
@@ -53,6 +55,7 @@ type ArScene = HTMLElement & {
       aria-live="polite"
       aria-atomic="true"
     >{{ statusMsg }}</div>
+    <app-schedule-overlay />
   `,
   styles: [`
     app-ar-view {
@@ -176,6 +179,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
     if (this.listeners.signal.aborted) return;
 
+    this.arService.warmup();
     this.ngZone.runOutsideAngular(() => {
       const signal = this.listeners.signal;
       window.addEventListener('camera-init', this.onCameraInit, { signal });

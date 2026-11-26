@@ -14,6 +14,7 @@ export class ArService {
   private readonly detections = new Subject<string | null>();
   private readonly cache = new Map<string, RoomSchedule>();
   private activeMarkerId: string | null = null;
+  private warmedUp = false;
 
   readonly currentSchedule = signal<RoomSchedule | null>(null);
   readonly detectedRoom = signal<Room | null>(null);
@@ -28,6 +29,16 @@ export class ArService {
       switchMap(markerId => markerId ? this.fetchSchedule(markerId) : EMPTY),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
+  }
+
+  warmup(): void {
+    if (this.warmedUp) return;
+    this.warmedUp = true;
+
+    this.http.get<RoomSchedule>(`${this.apiUrl}/api/rooms/pattern-101/schedule`).pipe(
+      catchError(() => EMPTY),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(schedule => this.cache.set('pattern-101', schedule));
   }
 
   markerFound(salon: string): void {

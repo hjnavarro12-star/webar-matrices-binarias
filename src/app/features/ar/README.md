@@ -24,7 +24,7 @@ ar/
 | `poc/index.html` | RA-PBI-02 | Pendiente de verificación documentada |
 | `ArViewComponent` | RA-PBI-03 | En revisión técnica; validación física y aceptación del PO pendientes |
 | `ArService` | RA-PBI-09 | Implementación técnica verificada; aceptación del PO pendiente |
-| `ScheduleOverlayComponent` | RA-PBI-10 | Pendiente — Sprint RA-2 |
+| `ScheduleOverlayComponent` | RA-PBI-10 | Implementación y prueba Serveo confirmadas; PO pendiente |
 
 ## Cómo empezar (RA-PBI-02)
 
@@ -54,9 +54,19 @@ La estrategia implementada evita HTML dinámico interpolado y reduce la interfer
 `ArService` consulta `GET /api/rooms/:marker_id/schedule` en Railway cuando `ArViewComponent` confirma un marcador. Expone `currentSchedule` y `detectedRoom` como `WritableSignal`, y `loading` y `error` como señales de solo lectura.
 
 - Los eventos se procesan fuera de `NgZone` y conservan el debounce de 120 ms del componente.
+- `warmup()` prepara TLS y Neon al abrir la vista y deja el salón 101 en caché.
 - `switchMap` cancela la consulta anterior al cambiar de salón o perder el marcador.
 - Los resultados válidos se guardan en memoria por Pattern; si falla la red, se reutiliza el último horario del mismo salón.
 - Los errores 400, 404 y de red muestran mensajes amigables sin filtrar detalles de la API.
+
+### Overlay de horario (RA-PBI-10)
+
+`ScheduleOverlayComponent` usa componentes Ionic y las señales de `ArService` para mostrar carga, error, horario semanal o un aviso de datos cacheados. La tarjeta es semitransparente, se coloca sobre el área inferior y se oculta cuando `markerLost` limpia la detección.
+
+- La tabla usa 15 px, encabezados fijos y desplazamiento interno para conservar la legibilidad.
+- El diseño se verificó en viewports de 360×640 y 393×786 sin desbordamiento.
+- Con eventos simulados y la API precalentada, el salón 101 apareció en 153 ms y el salón 201 en 472 ms.
+- La validación funcional con Serveo en el teléfono fue confirmada por el responsable; quedan el PO y los metadatos formales de evidencia.
 
 ### Pruebas automatizadas
 

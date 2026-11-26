@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { ArService } from '../../services/ar.service';
@@ -42,6 +43,7 @@ describe('ArViewComponent', () => {
   let permissionRequest: jasmine.Spy;
   let markerFound: jasmine.Spy;
   let markerLost: jasmine.Spy;
+  let warmup: jasmine.Spy;
 
   beforeEach(async () => {
     arWindow.AFRAME = {};
@@ -50,12 +52,23 @@ describe('ArViewComponent', () => {
       .and.returnValue(Promise.resolve('granted'));
     markerFound = jasmine.createSpy('markerFound');
     markerLost = jasmine.createSpy('markerLost');
+    warmup = jasmine.createSpy('warmup');
 
     await TestBed.configureTestingModule({
       imports: [ArViewComponent],
       providers: [
         { provide: CameraPermissionService, useValue: { request: permissionRequest } },
-        { provide: ArService, useValue: { markerFound, markerLost } },
+        {
+          provide: ArService,
+          useValue: {
+            markerFound,
+            markerLost,
+            warmup,
+            currentSchedule: signal(null),
+            loading: signal(false),
+            error: signal(null),
+          },
+        },
       ],
     }).compileComponents();
   });
@@ -96,6 +109,7 @@ describe('ArViewComponent', () => {
     view.detectChanges();
 
     expect(permissionRequest).toHaveBeenCalledTimes(1);
+    expect(warmup).toHaveBeenCalledTimes(1);
     expect(view.nativeElement.querySelector('a-scene')).not.toBeNull();
   });
 

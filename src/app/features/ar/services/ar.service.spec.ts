@@ -54,6 +54,20 @@ describe('ArService', () => {
     expect(service.error()).toBeNull();
   });
 
+  it('precalienta Railway una sola vez y deja el salón 101 en caché', () => {
+    service.warmup();
+    service.warmup();
+
+    const request = httpMock.expectOne(`${endpoint}/pattern-101/schedule`);
+    request.flush(schedule101);
+
+    service.markerFound('101');
+    expect(service.currentSchedule()).toEqual(schedule101);
+    const refresh = httpMock.expectOne(`${endpoint}/pattern-101/schedule`);
+    service.markerLost();
+    expect(refresh.cancelled).toBeTrue();
+  });
+
   it('consulta el Pattern fuera de NgZone y actualiza las señales con la respuesta', () => {
     const zone = TestBed.inject(NgZone);
     const runOutsideAngular = spyOn(zone, 'runOutsideAngular').and.callThrough();
