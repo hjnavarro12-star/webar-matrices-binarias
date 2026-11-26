@@ -8,6 +8,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "migrate": "node src/migrate.js",
+    "db:seed": "node src/seed-rooms.js",
     "db:verify": "node src/verify-schema.js",
     "test": "node --test"
   },

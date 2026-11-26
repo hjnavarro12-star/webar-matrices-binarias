@@ -105,6 +105,7 @@ cd server
 npm install
 # Configurar .env con PostgreSQL local o DATABASE_URL de Neon
 npm run migrate
+npm run db:seed
 npm run db:verify
 npm test
 npm run start
@@ -119,6 +120,8 @@ GET https://webar-matrices-binarias-production.up.railway.app/api/rooms/pattern-
 ```
 
 También acepta barcodes legacy del 1 al 64. Devuelve `room`, `pattern_marker_id` y `schedule`.
+
+`npm run db:seed` carga 45 horarios de prueba deterministas, con tres horarios y tres materias distintas por cada uno de los quince salones. Es idempotente y no elimina horarios existentes.
 
 ---
 
